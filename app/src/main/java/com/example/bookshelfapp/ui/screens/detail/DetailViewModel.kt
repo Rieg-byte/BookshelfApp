@@ -21,10 +21,10 @@ class DetailViewModel(private val booksListRepository: BooksListRepository): Vie
     private var _path: String by mutableStateOf("")
 
     fun repeat(){
-        getBookInfo(_path)
+        getBookInfo()
 
     }
-    fun getBookInfo(path: String) = viewModelScope.launch {
+    fun getBookInfo(path: String = _path) = viewModelScope.launch {
         detailUiState = DetailUiState.Loading
         _path = path
         detailUiState = try {
