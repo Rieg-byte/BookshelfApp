@@ -61,7 +61,7 @@ class SearchViewModel(private val booksListRepository: BooksListRepository): Vie
         else {
             searchUiState = SearchUiState.Loading
             searchUiState = try {
-                val result = booksListRepository.getBooksList(q)
+                val result = booksListRepository.getBooksListResponse(q)
                 if (result.items == null) SearchUiState.NotFound
                 else SearchUiState.Success(result)
             } catch (e: IOException) {

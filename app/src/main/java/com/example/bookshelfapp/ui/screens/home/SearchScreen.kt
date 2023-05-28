@@ -18,7 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.bookshelfapp.model.SearchResponse
+import com.example.bookshelfapp.model.BookListResponse
 import com.example.bookshelfapp.model.VolumeInfo
 import com.example.bookshelfapp.ui.components.BookImage
 import com.example.bookshelfapp.ui.components.DefaultScreen
@@ -38,7 +38,7 @@ fun SearchScreen(
     when (searchUiState) {
         is SearchUiState.Loading -> LoadingScreen()
         is SearchUiState.Success -> BooksListScreen(
-            searchUiState.searchResponse,
+            searchUiState.bookListResponse,
             navigateToDetailScreen,
             detailViewModel
         )
@@ -55,7 +55,7 @@ fun SearchScreen(
  */
 @Composable
 fun BooksListScreen(
-    searchResponse: SearchResponse,
+    bookListResponse: BookListResponse,
     navigateToDetailScreen: () -> Unit,
     detailViewModel: DetailViewModel,
     modifier: Modifier = Modifier
@@ -66,7 +66,7 @@ fun BooksListScreen(
             .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        searchResponse.items?.let {
+        bookListResponse.items?.let {
             items(it) {
                 BookItem(
                     volumeInfo = it.volumeInfo,
