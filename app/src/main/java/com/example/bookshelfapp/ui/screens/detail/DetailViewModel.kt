@@ -1,39 +1,63 @@
 package com.example.bookshelfapp.ui.screens.detail
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelfapp.BookshelfApplication
 import com.example.bookshelfapp.data.BooksListRepository
+import com.example.bookshelfapp.model.Book
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-class DetailViewModel(private val booksListRepository: BooksListRepository): ViewModel() {
-    var detailUiState: DetailUiState by mutableStateOf(DetailUiState.Loading)
-        private set
+class DetailViewModel(
+    savedStateHandle: SavedStateHandle,
+    private val booksListRepository: BooksListRepository
+    ): ViewModel() {
+    private val _detailUiState = MutableStateFlow<DetailUiState>(DetailUiState.Loading)
+    val detailUiState: StateFlow<DetailUiState> = _detailUiState.asStateFlow()
+    private val bookId: String = checkNotNull(savedStateHandle["bookId"])
 
-    private var _path: String by mutableStateOf("")
+    init {
+        getBookInfo(bookId)
+    }
 
     fun repeat(){
         getBookInfo()
 
     }
-    fun getBookInfo(path: String = _path) = viewModelScope.launch {
-        detailUiState = DetailUiState.Loading
-        _path = path
-        detailUiState = try {
-            DetailUiState.Success(booksListRepository.getBookInfo(path))
+    fun getBookInfo(path: String = bookId ) = viewModelScope.launch {
+        try {
+            val bookInfo = booksListRepository.getBookInfo(path)
+            giveSuccessStatus(bookInfo)
         } catch (e: IOException){
-            DetailUiState.Error
+            giveErrorStatus()
         } catch (e: HttpException){
-            DetailUiState.Error
+            giveErrorStatus()
         }
+    }
+
+    private fun giveSuccessStatus(book: Book){
+        _detailUiState.value = DetailUiState.Success(
+            title = book.volumeInfo.title,
+            description = book.volumeInfo.description,
+            author = book.volumeInfo.authors?.joinToString(),
+            imageUrl = book.volumeInfo.imageLinks?.smallThumbnail ?: "",
+            previewLink = book.volumeInfo.previewLink ?: ""
+        )
+
+    }
+    private fun giveErrorStatus(){
+        _detailUiState.value = DetailUiState.Error
+
     }
 
     companion object {
@@ -41,7 +65,7 @@ class DetailViewModel(private val booksListRepository: BooksListRepository): Vie
             initializer {
                 val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as BookshelfApplication)
                 val booksListRepository = application.container.booksListRepository
-                DetailViewModel(booksListRepository = booksListRepository)
+                DetailViewModel(this.createSavedStateHandle() ,booksListRepository = booksListRepository)
             }
         }
     }

@@ -14,6 +14,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -21,29 +23,52 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bookshelfapp.R
-import com.example.bookshelfapp.model.VolumeInfo
 import com.example.bookshelfapp.ui.components.BookImage
+import com.example.bookshelfapp.ui.components.ButtonPreview
 import com.example.bookshelfapp.ui.components.ErrorScreen
 import com.example.bookshelfapp.ui.components.LoadingScreen
 
 @Composable
 fun DetailScreen(
-    detailViewModel: DetailViewModel,
-    detailUiState: DetailUiState,
-    modifier: Modifier = Modifier
+    detailViewModel: DetailViewModel = viewModel(factory = DetailViewModel.Factory)
 ) {
-    when (detailUiState) {
-        is DetailUiState.Success -> DetailInfoBook(detailUiState.book.volumeInfo)
+    val detailUiState by detailViewModel.detailUiState.collectAsState()
+    DetailBody(
+        detailUiState = detailUiState,
+        onRepeat = detailViewModel::repeat
+    )
+}
+
+@Composable
+private fun DetailBody(
+    detailUiState: DetailUiState,
+    onRepeat: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    when (detailUiState){
+        is DetailUiState.Success ->
+            DetailInfoBook(
+                title = detailUiState.title,
+                author = detailUiState.author ?: stringResource(id = R.string.author_not_specified),
+                description = detailUiState.description ?: stringResource(id = R.string.no_description),
+                imageUrl = detailUiState.imageUrl,
+                previewLink = detailUiState.previewLink
+            )
         is DetailUiState.Loading -> LoadingScreen()
-        is DetailUiState.Error -> ErrorScreen(onRepeat = { detailViewModel.repeat() })
+        is DetailUiState.Error -> ErrorScreen(onRepeat = onRepeat)
     }
 
 }
 
 @Composable
-fun DetailInfoBook(
-    volumeInfo: VolumeInfo,
+private fun DetailInfoBook(
+    title: String,
+    author: String,
+    description: String,
+    imageUrl: String,
+    previewLink: String,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -57,25 +82,24 @@ fun DetailInfoBook(
         Row(
             modifier = Modifier.height(180.dp)
         ) {
-            BookImage(image = volumeInfo.imageLinks)
+            BookImage(imageUrl = imageUrl)
             Column(modifier = Modifier.padding(8.dp)) {
                 Text(
-                    text = volumeInfo.title,
+                    text = title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 5
                 )
-                volumeInfo.authors?.let {
-                    Text(
-                        text = it.joinToString(),
-                        fontSize = 14.sp,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
-                }
+                Text(
+                    text = author,
+                    fontSize = 14.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
             }
         }
+
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(id = R.string.description),
@@ -83,7 +107,7 @@ fun DetailInfoBook(
             fontSize = 18.sp
         )
         Text(
-            text = volumeInfo.description ?: stringResource(id = R.string.no_description),
+            text = description,
             fontSize = 14.sp
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -93,32 +117,16 @@ fun DetailInfoBook(
             fontSize = 18.sp
         )
         Text(
-            text = volumeInfo.authors?.joinToString()
-                ?: stringResource(id = R.string.authors_not_specified),
+            text = author,
             fontSize = 14.sp
         )
         Spacer(modifier = Modifier.height(8.dp))
         ButtonPreview(
             context = context,
-            volumeInfo = volumeInfo
+            previewLink = previewLink
         )
-
-    }
-}
-
-@Composable
-fun ButtonPreview(
-    context: Context,
-    volumeInfo: VolumeInfo,
-    modifier: Modifier = Modifier
-) {
-    Button(
-        onClick = {
-            val urlIntent = Intent(Intent.ACTION_VIEW, Uri.parse(volumeInfo.previewLink))
-            context.startActivity(urlIntent)
-        }
-    ) {
-        Text(text = stringResource(id = R.string.preview))
     }
 
 }
+
+

@@ -1,4 +1,4 @@
-package com.example.bookshelfapp.ui.screens.home
+package com.example.bookshelfapp.ui.screens.search
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,38 +13,52 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.bookshelfapp.model.BookListResponse
-import com.example.bookshelfapp.model.VolumeInfo
+import com.example.bookshelfapp.R
+import com.example.bookshelfapp.model.BookItem
 import com.example.bookshelfapp.ui.components.BookImage
 import com.example.bookshelfapp.ui.components.DefaultScreen
 import com.example.bookshelfapp.ui.components.ErrorScreen
 import com.example.bookshelfapp.ui.components.LoadingScreen
 import com.example.bookshelfapp.ui.components.NotFoundScreen
-import com.example.bookshelfapp.ui.screens.detail.DetailViewModel
 
 @Composable
 fun SearchScreen(
-    searchUiState: SearchUiState,
-    navigateToDetailScreen: () -> Unit,
+    navigateToDetailScreen: (String) -> Unit,
     searchViewModel: SearchViewModel,
-    detailViewModel: DetailViewModel,
-    modifier: Modifier = Modifier
 ) {
+    val searchUiState by searchViewModel.searchUiState.collectAsState()
+    SearchBody(
+        searchUiState = searchUiState,
+        onBookItemClick = navigateToDetailScreen,
+        onRepeat = searchViewModel::repeat
+    )
+
+
+}
+@Composable
+fun SearchBody(
+    searchUiState: SearchUiState,
+    onBookItemClick: (String) -> Unit,
+    onRepeat: () -> Unit,
+    modifier: Modifier = Modifier
+
+){
     when (searchUiState) {
         is SearchUiState.Loading -> LoadingScreen()
         is SearchUiState.Success -> BooksListScreen(
-            searchUiState.bookListResponse,
-            navigateToDetailScreen,
-            detailViewModel
+            searchUiState.listOfBooks,
+            onBookItemClick
         )
-
-        is SearchUiState.Error -> ErrorScreen({ searchViewModel.repeatInput() })
-        is SearchUiState.NotFound -> NotFoundScreen(searchViewModel.userInput)
+        is SearchUiState.Error -> ErrorScreen(onRepeat)
+        is SearchUiState.NotFound -> NotFoundScreen(searchUiState.userInput)
         is SearchUiState.Default -> DefaultScreen()
     }
 
@@ -55,9 +69,8 @@ fun SearchScreen(
  */
 @Composable
 fun BooksListScreen(
-    bookListResponse: BookListResponse,
-    navigateToDetailScreen: () -> Unit,
-    detailViewModel: DetailViewModel,
+    listOfBooks: List<BookItem>,
+    onBookItemClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -66,16 +79,13 @@ fun BooksListScreen(
             .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        bookListResponse.items?.let {
-            items(it) {
-                BookItem(
-                    volumeInfo = it.volumeInfo,
-                    navigateToDetailScreen = {
-                        navigateToDetailScreen()
-                        detailViewModel.getBookInfo(it.id)
-                    }
-                )
-            }
+        items(listOfBooks) {
+            BookItem(
+                title = it.title,
+                author = it.author ?: stringResource(id = R.string.author_not_specified),
+                imageUrl = it.imageUrl,
+                onBookItemClick = {onBookItemClick(it.id)}
+            )
         }
     }
 }
@@ -83,39 +93,38 @@ fun BooksListScreen(
 
 @Composable
 fun BookItem(
-    volumeInfo: VolumeInfo,
-    navigateToDetailScreen: () -> Unit,
+    title: String,
+    author: String,
+    imageUrl: String,
+    onBookItemClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .height(160.dp)
-            .clickable { navigateToDetailScreen() }
+            .clickable { onBookItemClick() }
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            BookImage(volumeInfo.imageLinks)
+            BookImage(imageUrl)
             Column(modifier = Modifier.padding(8.dp)) {
                 Text(
-                    text = volumeInfo.title,
+                    text = title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2
                 )
-                volumeInfo.authors?.let {
-                    Text(
-                        text = it.joinToString(),
-                        fontSize = 14.sp,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
-                }
+                Text(
+                    text = author,
+                    fontSize = 14.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
             }
-
         }
     }
 }

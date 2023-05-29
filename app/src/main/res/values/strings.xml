@@ -3,7 +3,7 @@
     <string name="error">Не удалось загрузить данные</string>
     <string name="repeat">Повторить</string>
     <string name="search">Поиск</string>
-    <string name="authors_not_specified">Не указаны</string>
+    <string name="author_not_specified">Не указан</string>
     <string name="not_found">Ничего не найдено\nпо запросу:</string>
     <string name="enter_text">Введите название книги</string>
     <string name="back_button">Кнопка назад</string>

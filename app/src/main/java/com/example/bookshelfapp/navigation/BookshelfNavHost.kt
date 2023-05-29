@@ -2,40 +2,32 @@ package com.example.bookshelfapp.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.bookshelfapp.ui.screens.detail.DetailScreen
-import com.example.bookshelfapp.ui.screens.detail.DetailUiState
-import com.example.bookshelfapp.ui.screens.detail.DetailViewModel
-import com.example.bookshelfapp.ui.screens.home.SearchScreen
-import com.example.bookshelfapp.ui.screens.home.SearchUiState
-import com.example.bookshelfapp.ui.screens.home.SearchViewModel
+import com.example.bookshelfapp.ui.screens.search.SearchScreen
+import com.example.bookshelfapp.ui.screens.search.SearchViewModel
 
 
 @Composable
 fun BookshelfNavHost(
     navController: NavHostController,
-    searchUiState: SearchUiState,
-    searchViewModel: SearchViewModel,
-    detailViewModel: DetailViewModel,
-    detailUiState: DetailUiState,
-    navigateToDetailScreen: () -> Unit,
-    startDestination: String
+    searchViewModel: SearchViewModel
 ) {
-    NavHost(navController = navController, startDestination = startDestination) {
+    NavHost(navController = navController, startDestination = Screens.Search.name) {
         composable(route = Screens.Search.name) {
             SearchScreen(
-                searchUiState = searchUiState,
                 searchViewModel = searchViewModel,
-                detailViewModel = detailViewModel,
-                navigateToDetailScreen = navigateToDetailScreen
+                navigateToDetailScreen = {bookId -> navController.navigate("${Screens.Detail.name}/$bookId")}
             )
         }
-        composable(route = Screens.Detail.name) {
-            DetailScreen(
-                detailViewModel = detailViewModel,
-                detailUiState = detailUiState
-            )
+        composable(
+            route = "${Screens.Detail.name}/{bookId}",
+            arguments = listOf(navArgument("bookId") { type = NavType.StringType })
+        ) {
+            DetailScreen()
         }
 
     }

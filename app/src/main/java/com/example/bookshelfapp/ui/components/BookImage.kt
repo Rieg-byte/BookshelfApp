@@ -14,13 +14,13 @@ import com.example.bookshelfapp.R
 import com.example.bookshelfapp.model.ImageLink
 
 @Composable
-fun BookImage(image: ImageLink?, modifier: Modifier = Modifier) {
+fun BookImage(imageUrl: String, modifier: Modifier = Modifier) {
     AsyncImage(
         modifier = Modifier
             .fillMaxHeight()
             .width(120.dp),
         model = ImageRequest.Builder(context = LocalContext.current)
-            .data(image?.smallThumbnail?.replace("http", "https"))
+            .data(imageUrl.replace("http", "https"))
             .crossfade(true)
             .build(),
         contentScale = ContentScale.Crop,

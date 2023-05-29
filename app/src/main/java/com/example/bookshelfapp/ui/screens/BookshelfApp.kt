@@ -25,20 +25,17 @@ import com.example.bookshelfapp.R
 import com.example.bookshelfapp.navigation.BookshelfNavHost
 import com.example.bookshelfapp.navigation.Screens
 import com.example.bookshelfapp.ui.components.SearchField
-import com.example.bookshelfapp.ui.screens.detail.DetailViewModel
-import com.example.bookshelfapp.ui.screens.home.SearchViewModel
+import com.example.bookshelfapp.ui.screens.search.SearchViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookshelfApp(modifier: Modifier = Modifier) {
+    val searchViewModel:SearchViewModel = viewModel(factory = SearchViewModel.Factory)
     val navController: NavHostController = rememberNavController()
-    val searchViewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory)
-    val detailViewModel: DetailViewModel = viewModel(factory = DetailViewModel.Factory)
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = Screens.valueOf(
-        backStackEntry?.destination?.route ?: Screens.Search.name
-    )
+    val currentScreen = backStackEntry?.destination?.route ?: Screens.Search.name
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -59,12 +56,7 @@ fun BookshelfApp(modifier: Modifier = Modifier) {
         ) {
             BookshelfNavHost(
                 navController = navController,
-                startDestination = Screens.Search.name,
-                searchUiState = searchViewModel.searchUiState,
-                searchViewModel = searchViewModel,
-                detailViewModel = detailViewModel,
-                detailUiState = detailViewModel.detailUiState,
-                navigateToDetailScreen = {navController.navigate(Screens.Detail.name)}
+                searchViewModel = searchViewModel
             )
         }
 
@@ -81,7 +73,7 @@ fun BookshelfApp(modifier: Modifier = Modifier) {
 fun BookshelfAppBar(
     navigateUp: () -> Unit,
     canNavigateUp: Boolean,
-    currentScreen: Screens,
+    currentScreen: String,
     searchViewModel: SearchViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -91,7 +83,7 @@ fun BookshelfAppBar(
             .padding(8.dp)
         ,
         title = {
-            if (currentScreen.name == "Search") {
+            if (currentScreen == "Search") {
                 SearchField(
                     userInput = searchViewModel.userInput,
                     updateUserInput = { searchViewModel.updateUserInput(it) },
