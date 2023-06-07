@@ -12,4 +12,7 @@
     <string name="no_description">Нет описания</string>
     <string name="preview">Предпросмотр</string>
     <string name="authors">Авторы</string>
+    <string name="books">Книги</string>
+    <string name="favorites">Избранное</string>
+
 </resources>

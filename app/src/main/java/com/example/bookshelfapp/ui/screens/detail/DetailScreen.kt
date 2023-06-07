@@ -1,8 +1,5 @@
 package com.example.bookshelfapp.ui.screens.detail
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,8 +8,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,15 +29,42 @@ import com.example.bookshelfapp.ui.components.BookImage
 import com.example.bookshelfapp.ui.components.ButtonPreview
 import com.example.bookshelfapp.ui.components.ErrorScreen
 import com.example.bookshelfapp.ui.components.LoadingScreen
+import com.example.bookshelfapp.ui.icons.BookshelfIcons
 
 @Composable
 fun DetailScreen(
-    detailViewModel: DetailViewModel = viewModel(factory = DetailViewModel.Factory)
+    detailViewModel: DetailViewModel = viewModel(factory = DetailViewModel.Factory),
+    navigateUp: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val detailUiState by detailViewModel.detailUiState.collectAsState()
-    DetailBody(
-        detailUiState = detailUiState,
-        onRepeat = detailViewModel::repeat
+    Column(modifier = modifier.fillMaxSize()) {
+        DetailAppBar(navigateUp = navigateUp)
+        DetailBody(
+            detailUiState = detailUiState,
+            onRepeat = detailViewModel::repeat
+        )
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DetailAppBar(
+    navigateUp: () -> Unit,
+    modifier: Modifier = Modifier
+
+) {
+    TopAppBar(
+        title = {},
+        navigationIcon = {
+            IconButton(onClick = navigateUp) {
+                Icon(
+                    imageVector = BookshelfIcons.ArrowBack,
+                    contentDescription = stringResource(id = R.string.back_button)
+                )
+            }
+        }
     )
 }
 
@@ -46,21 +73,24 @@ private fun DetailBody(
     detailUiState: DetailUiState,
     onRepeat: () -> Unit,
     modifier: Modifier = Modifier
-){
-    when (detailUiState){
+) {
+    when (detailUiState) {
         is DetailUiState.Success ->
             DetailInfoBook(
                 title = detailUiState.title,
                 author = detailUiState.author ?: stringResource(id = R.string.author_not_specified),
-                description = detailUiState.description ?: stringResource(id = R.string.no_description),
+                description = detailUiState.description
+                    ?: stringResource(id = R.string.no_description),
                 imageUrl = detailUiState.imageUrl,
                 previewLink = detailUiState.previewLink
             )
+
         is DetailUiState.Loading -> LoadingScreen()
         is DetailUiState.Error -> ErrorScreen(onRepeat = onRepeat)
     }
 
 }
+
 
 @Composable
 private fun DetailInfoBook(

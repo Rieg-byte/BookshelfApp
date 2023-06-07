@@ -3,6 +3,7 @@ package com.example.bookshelfapp.ui.screens.search
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bookshelfapp.R
 import com.example.bookshelfapp.model.BookItem
 import com.example.bookshelfapp.ui.components.BookImage
@@ -28,23 +30,48 @@ import com.example.bookshelfapp.ui.components.DefaultScreen
 import com.example.bookshelfapp.ui.components.ErrorScreen
 import com.example.bookshelfapp.ui.components.LoadingScreen
 import com.example.bookshelfapp.ui.components.NotFoundScreen
+import com.example.bookshelfapp.ui.components.SearchField
+
 
 @Composable
 fun SearchScreen(
     navigateToDetailScreen: (String) -> Unit,
-    searchViewModel: SearchViewModel,
+    searchViewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory),
+    modifier: Modifier = Modifier
 ) {
     val searchUiState by searchViewModel.searchUiState.collectAsState()
-    SearchBody(
-        searchUiState = searchUiState,
-        onBookItemClick = navigateToDetailScreen,
-        onRepeat = searchViewModel::repeat
+    Column(modifier = modifier.fillMaxSize()) {
+        SearchTopBar(
+            userInput = searchViewModel.userInput,
+            updateUserInput = searchViewModel::updateUserInput,
+            clearUserInput = searchViewModel::clearUserInput,
+            onDone = {searchViewModel.getBooksList(searchViewModel.userInput)}
+        )
+        SearchBody(
+            searchUiState = searchUiState,
+            onBookItemClick = navigateToDetailScreen,
+            onRepeat = searchViewModel::repeat
+        )
+    }
+}
+
+
+@Composable
+private fun SearchTopBar(
+    userInput: String,
+    updateUserInput: (String) -> Unit,
+    clearUserInput: () -> Unit,
+    onDone: () -> Unit
+){
+    SearchField(
+        userInput = userInput,
+        updateUserInput = updateUserInput,
+        clearUserInput = clearUserInput,
+        onDone = onDone
     )
-
-
 }
 @Composable
-fun SearchBody(
+private fun SearchBody(
     searchUiState: SearchUiState,
     onBookItemClick: (String) -> Unit,
     onRepeat: () -> Unit,
@@ -75,8 +102,8 @@ fun BooksListScreen(
 ) {
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp),
+            .fillMaxSize(),
+        contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(listOfBooks) {
