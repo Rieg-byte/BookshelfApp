@@ -1,10 +1,12 @@
 package com.example.bookshelfapp.di
 
 import android.content.Context
-import com.example.bookshelfapp.data.local.BookshelfDatabase
+import com.example.bookshelfapp.data.local.BooksDatabase
 import com.example.bookshelfapp.data.BooksRepository
-import com.example.bookshelfapp.data.NetworkBooksRepository
-import com.example.bookshelfapp.data.remote.BookshelfApiService
+import com.example.bookshelfapp.data.BooksRepositoryImpl
+import com.example.bookshelfapp.data.FavoritesRepository
+import com.example.bookshelfapp.data.FavoritesRepositoryImpl
+import com.example.bookshelfapp.data.remote.BooksApiService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -12,6 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 interface AppContainer {
     val booksRepository: BooksRepository
+    val favoritesRepository: FavoritesRepository
 }
 
 class DefaultAppContainer(context: Context): AppContainer {
@@ -28,13 +31,19 @@ class DefaultAppContainer(context: Context): AppContainer {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    private val retrofitService: BookshelfApiService by lazy {
-        retrofit.create(BookshelfApiService::class.java)
+    private val retrofitService: BooksApiService by lazy {
+        retrofit.create(BooksApiService::class.java)
     }
 
     override val booksRepository: BooksRepository by lazy {
-        NetworkBooksRepository(retrofitService, BookshelfDatabase.getDatabase(context).favoriteDao())
+        BooksRepositoryImpl(retrofitService)
     }
+
+    override val favoritesRepository: FavoritesRepository by lazy {
+        FavoritesRepositoryImpl(BooksDatabase.getDatabase(context).favoriteDao())
+    }
+
+
 
 }
 

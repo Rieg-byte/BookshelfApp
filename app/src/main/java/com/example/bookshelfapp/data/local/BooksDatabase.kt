@@ -8,14 +8,14 @@ import com.example.bookshelfapp.data.local.dao.FavoriteDao
 import com.example.bookshelfapp.data.local.entities.Favorite
 
 @Database(entities = [Favorite::class], version = 1)
-abstract class BookshelfDatabase: RoomDatabase() {
+abstract class BooksDatabase: RoomDatabase() {
     abstract fun favoriteDao(): FavoriteDao
     companion object {
         @Volatile
-        private var Instance: BookshelfDatabase? = null
-        fun getDatabase(context: Context): BookshelfDatabase {
+        private var Instance: BooksDatabase? = null
+        fun getDatabase(context: Context): BooksDatabase {
             return Instance ?: synchronized(this) {
-                Room.databaseBuilder(context, BookshelfDatabase::class.java, "bookshelf_database")
+                Room.databaseBuilder(context, BooksDatabase::class.java, "books_database")
                     .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
