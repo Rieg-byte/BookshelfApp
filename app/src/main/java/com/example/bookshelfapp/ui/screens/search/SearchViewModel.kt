@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelfapp.BookshelfApplication
-import com.example.bookshelfapp.data.remote.BooksListRepository
+import com.example.bookshelfapp.data.BooksRepository
 import com.example.bookshelfapp.model.Book
 import com.example.bookshelfapp.model.BookItem
 import com.example.bookshelfapp.model.BookListResponse
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-class SearchViewModel(private val booksListRepository: BooksListRepository) : ViewModel() {
+class SearchViewModel(private val booksRepository: BooksRepository) : ViewModel() {
     private val _searchUiState = MutableStateFlow<SearchUiState>(SearchUiState.Default)
     val searchUiState: StateFlow<SearchUiState> = _searchUiState.asStateFlow()
 
@@ -60,7 +60,7 @@ class SearchViewModel(private val booksListRepository: BooksListRepository) : Vi
         else viewModelScope.launch {
             try {
                 _searchUiState.value = SearchUiState.Loading
-                val bookListResponse = booksListRepository.getBooksListResponse(q)
+                val bookListResponse = booksRepository.getBooksListResponse(q)
                 giveSuccessStatus(bookListResponse)
             } catch (e: IOException) {
                 giveErrorStatus()
@@ -104,8 +104,8 @@ class SearchViewModel(private val booksListRepository: BooksListRepository) : Vi
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as BookshelfApplication)
-                val booksListRepository = application.container.booksListRepository
-                SearchViewModel(booksListRepository = booksListRepository)
+                val booksListRepository = application.container.booksRepository
+                SearchViewModel(booksRepository = booksListRepository)
             }
         }
     }

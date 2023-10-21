@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelfapp.BookshelfApplication
-import com.example.bookshelfapp.data.remote.BooksListRepository
+import com.example.bookshelfapp.data.BooksRepository
 import com.example.bookshelfapp.model.Book
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +20,7 @@ import java.io.IOException
 
 class DetailViewModel(
     savedStateHandle: SavedStateHandle,
-    private val booksListRepository: BooksListRepository
+    private val booksRepository: BooksRepository
     ): ViewModel() {
     private val _detailUiState = MutableStateFlow<DetailUiState>(DetailUiState.Loading)
     val detailUiState: StateFlow<DetailUiState> = _detailUiState.asStateFlow()
@@ -36,7 +36,7 @@ class DetailViewModel(
     }
     fun getBookInfo(path: String = bookId ) = viewModelScope.launch {
         try {
-            val bookInfo = booksListRepository.getBookInfo(path)
+            val bookInfo = booksRepository.getBookInfo(path)
             giveSuccessStatus(bookInfo)
         } catch (e: IOException){
             giveErrorStatus()
@@ -64,8 +64,8 @@ class DetailViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as BookshelfApplication)
-                val booksListRepository = application.container.booksListRepository
-                DetailViewModel(this.createSavedStateHandle() ,booksListRepository = booksListRepository)
+                val booksListRepository = application.container.booksRepository
+                DetailViewModel(this.createSavedStateHandle() ,booksRepository = booksListRepository)
             }
         }
     }
