@@ -4,7 +4,7 @@ import com.example.bookshelfapp.data.local.dao.FavoriteDao
 import com.example.bookshelfapp.data.local.entities.Favorite
 import com.example.bookshelfapp.model.Book
 import com.example.bookshelfapp.model.BookListResponse
-import com.example.bookshelfapp.data.remote.network.BookshelfApiService
+import com.example.bookshelfapp.data.remote.BookshelfApiService
 import kotlinx.coroutines.flow.Flow
 
 interface BooksRepository {

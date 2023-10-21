@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.bookshelfapp.data.local.BookshelfDatabase
 import com.example.bookshelfapp.data.BooksRepository
 import com.example.bookshelfapp.data.NetworkBooksRepository
-import com.example.bookshelfapp.data.remote.network.BookshelfApiService
+import com.example.bookshelfapp.data.remote.BookshelfApiService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

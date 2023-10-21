@@ -1,4 +1,4 @@
-package com.example.bookshelfapp.data.remote.network
+package com.example.bookshelfapp.data.remote
 
 import com.example.bookshelfapp.model.Book
 import com.example.bookshelfapp.model.BookListResponse
