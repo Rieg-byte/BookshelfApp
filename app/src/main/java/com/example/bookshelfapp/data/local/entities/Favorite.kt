@@ -6,9 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity("favorites")
 data class Favorite(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val author: String?,
+    @PrimaryKey val id: String,
+    val author: String,
     val title: String,
-    @ColumnInfo("image_url") val imageUrl: String,
-    @ColumnInfo("self_link") val selfLink: String
+    @ColumnInfo("image_url") val imageUrl: String
 )
