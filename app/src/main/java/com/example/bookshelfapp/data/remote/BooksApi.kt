@@ -1,14 +1,14 @@
 package com.example.bookshelfapp.data.remote
 
-import com.example.bookshelfapp.model.Book
-import com.example.bookshelfapp.model.BookListResponse
+import com.example.bookshelfapp.data.remote.model.Book
+import com.example.bookshelfapp.data.remote.model.BookList
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface BooksApiService {
+interface BooksApi {
     @GET("volumes")
-    suspend fun getBookListResponse(@Query("q") query: String): BookListResponse
+    suspend fun getBookList(@Query("q") query: String): BookList
 
     @GET("volumes/{volume_id}")
     suspend fun getBookInfo(@Path("volume_id") volumeId: String): Book
