@@ -11,9 +11,9 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelfapp.BookshelfApplication
 import com.example.bookshelfapp.data.BooksRepository
-import com.example.bookshelfapp.model.Book
-import com.example.bookshelfapp.model.BookItem
-import com.example.bookshelfapp.model.BookListResponse
+import com.example.bookshelfapp.data.FavoritesRepository
+import com.example.bookshelfapp.data.local.entities.Favorite
+import com.example.bookshelfapp.data.remote.model.Item
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,13 +21,15 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-class SearchViewModel(private val booksRepository: BooksRepository) : ViewModel() {
+class SearchViewModel(
+    private val booksRepository: BooksRepository,
+    private val favoritesRepository: FavoritesRepository
+) : ViewModel() {
     private val _searchUiState = MutableStateFlow<SearchUiState>(SearchUiState.Default)
     val searchUiState: StateFlow<SearchUiState> = _searchUiState.asStateFlow()
 
     var userInput: String by mutableStateOf("")
         private set
-
     /**
      * Обновление пользовательского ввода
      */
@@ -35,6 +37,19 @@ class SearchViewModel(private val booksRepository: BooksRepository) : ViewModel(
         userInput = newUserInput
         _searchUiState.value = SearchUiState.Default
 
+    }
+
+    fun insertBook(item: Item) {
+        viewModelScope.launch {
+            favoritesRepository.insertBook(
+                Favorite(
+                    title = item.title,
+                    author = "",
+                    imageUrl = item.imageUrl,
+                    selfLink = ""
+                )
+            )
+        }
     }
 
     /**
@@ -60,8 +75,8 @@ class SearchViewModel(private val booksRepository: BooksRepository) : ViewModel(
         else viewModelScope.launch {
             try {
                 _searchUiState.value = SearchUiState.Loading
-                val bookListResponse = booksRepository.getBooksListResponse(q)
-                giveSuccessStatus(bookListResponse)
+                val bookList = booksRepository.getBooksList(q)
+                giveSuccessStatus(bookList)
             } catch (e: IOException) {
                 giveErrorStatus()
             } catch (e: HttpException) {
@@ -70,26 +85,13 @@ class SearchViewModel(private val booksRepository: BooksRepository) : ViewModel(
         }
     }
 
-    private fun giveSuccessStatus(bookListResponse: BookListResponse) {
-        val listOfBooks = bookListResponse.items
-        if (listOfBooks != null) {
-            _searchUiState.value = SearchUiState.Success(getBookItems(listOfBooks))
+    private fun giveSuccessStatus(bookList: List<Item>) {
+        if (bookList != null) {
+            _searchUiState.value = SearchUiState.Success(bookList)
         } else {
             _searchUiState.value = SearchUiState.NotFound(userInput)
         }
     }
-
-    private fun getBookItems(list: List<Book>): List<BookItem> {
-        return list.map {
-            BookItem(
-                id = it.id,
-                title = it.volumeInfo.title,
-                imageUrl = it.volumeInfo.imageLinks?.smallThumbnail ?: "",
-                author = it.volumeInfo.authors?.joinToString()
-            )
-        }
-    }
-
 
     private fun giveErrorStatus() {
         _searchUiState.value = SearchUiState.Error
@@ -105,7 +107,11 @@ class SearchViewModel(private val booksRepository: BooksRepository) : ViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as BookshelfApplication)
                 val booksListRepository = application.container.booksRepository
-                SearchViewModel(booksRepository = booksListRepository)
+                val favoritesRepository = application.container.favoritesRepository
+                SearchViewModel(
+                    booksRepository = booksListRepository,
+                    favoritesRepository = favoritesRepository
+                    )
             }
         }
     }

@@ -1,10 +1,10 @@
 package com.example.bookshelfapp.data
 
 
-import com.example.bookshelfapp.model.Book
-import com.example.bookshelfapp.model.BookListResponse
+import com.example.bookshelfapp.data.remote.model.BookInfo
+import com.example.bookshelfapp.data.remote.model.Item
 
 interface BooksRepository {
-    suspend fun getBooksListResponse(query: String): BookListResponse
-    suspend fun getBookInfo(path: String): Book
+    suspend fun getBooksList(query: String): List<Item>
+    suspend fun getBookInfo(path: String): BookInfo
 }

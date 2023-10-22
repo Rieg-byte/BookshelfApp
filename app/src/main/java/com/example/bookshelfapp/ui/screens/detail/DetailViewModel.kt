@@ -10,7 +10,8 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelfapp.BookshelfApplication
 import com.example.bookshelfapp.data.BooksRepository
-import com.example.bookshelfapp.model.Book
+import com.example.bookshelfapp.data.remote.model.Book
+import com.example.bookshelfapp.data.remote.model.BookInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,8 +33,8 @@ class DetailViewModel(
 
     fun repeat(){
         getBookInfo()
-
     }
+
     fun getBookInfo(path: String = bookId ) = viewModelScope.launch {
         try {
             val bookInfo = booksRepository.getBookInfo(path)
@@ -45,13 +46,13 @@ class DetailViewModel(
         }
     }
 
-    private fun giveSuccessStatus(book: Book){
+    private fun giveSuccessStatus(bookInfo: BookInfo){
         _detailUiState.value = DetailUiState.Success(
-            title = book.volumeInfo.title,
-            description = book.volumeInfo.description,
-            author = book.volumeInfo.authors?.joinToString(),
-            imageUrl = book.volumeInfo.imageLinks?.smallThumbnail ?: "",
-            previewLink = book.volumeInfo.previewLink ?: ""
+            title = bookInfo.title,
+            description = bookInfo.description,
+            author = bookInfo.author,
+            imageUrl = bookInfo.imageUrl,
+            previewLink = bookInfo.previewLink
         )
 
     }

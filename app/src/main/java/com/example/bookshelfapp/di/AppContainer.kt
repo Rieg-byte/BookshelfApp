@@ -6,7 +6,7 @@ import com.example.bookshelfapp.data.BooksRepository
 import com.example.bookshelfapp.data.BooksRepositoryImpl
 import com.example.bookshelfapp.data.FavoritesRepository
 import com.example.bookshelfapp.data.FavoritesRepositoryImpl
-import com.example.bookshelfapp.data.remote.BooksApiService
+import com.example.bookshelfapp.data.remote.BooksApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -31,8 +31,8 @@ class DefaultAppContainer(context: Context): AppContainer {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    private val retrofitService: BooksApiService by lazy {
-        retrofit.create(BooksApiService::class.java)
+    private val retrofitService: BooksApi by lazy {
+        retrofit.create(BooksApi::class.java)
     }
 
     override val booksRepository: BooksRepository by lazy {

@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.bookshelfapp.R
-import com.example.bookshelfapp.model.ImageLink
 
 @Composable
 fun BookImage(imageUrl: String, modifier: Modifier = Modifier) {

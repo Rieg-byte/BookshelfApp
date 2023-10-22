@@ -78,9 +78,8 @@ private fun DetailBody(
         is DetailUiState.Success ->
             DetailInfoBook(
                 title = detailUiState.title,
-                author = detailUiState.author ?: stringResource(id = R.string.author_not_specified),
-                description = detailUiState.description
-                    ?: stringResource(id = R.string.no_description),
+                author = detailUiState.author,
+                description = detailUiState.description,
                 imageUrl = detailUiState.imageUrl,
                 previewLink = detailUiState.previewLink
             )

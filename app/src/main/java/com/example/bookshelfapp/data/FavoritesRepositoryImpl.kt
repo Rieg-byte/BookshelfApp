@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 class FavoritesRepositoryImpl(private val favoritesLocalDataSource: FavoriteDao) : FavoritesRepository {
     override fun getAll(): Flow<List<Favorite>> = favoritesLocalDataSource.getAll()
+    override suspend fun insertBook(favorite: Favorite) = favoritesLocalDataSource.insertBook(favorite)
 }

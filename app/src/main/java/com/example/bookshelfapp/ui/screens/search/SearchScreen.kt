@@ -21,14 +21,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.bookshelfapp.R
-import com.example.bookshelfapp.model.BookItem
+import com.example.bookshelfapp.data.remote.model.Item
 import com.example.bookshelfapp.ui.components.BookImage
 import com.example.bookshelfapp.ui.components.DefaultScreen
 import com.example.bookshelfapp.ui.components.ErrorScreen
@@ -100,7 +98,7 @@ private fun SearchBody(
  */
 @Composable
 fun BooksListScreen(
-    listOfBooks: List<BookItem>,
+    listOfBooks: List<Item>,
     onBookItemClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -113,7 +111,7 @@ fun BooksListScreen(
         items(listOfBooks) {
             BookItem(
                 title = it.title,
-                author = it.author ?: stringResource(id = R.string.author_not_specified),
+                author = it.author,
                 imageUrl = it.imageUrl,
                 onBookItemClick = {onBookItemClick(it.id)}
             )
