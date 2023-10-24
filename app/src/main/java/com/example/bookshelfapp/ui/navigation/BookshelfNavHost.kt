@@ -11,7 +11,6 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.bookshelfapp.ui.navigation.destinations.BottomBarDestination
 import com.example.bookshelfapp.ui.navigation.destinations.SearchDestination
-import com.example.bookshelfapp.ui.screens.books.BooksScreen
 import com.example.bookshelfapp.ui.screens.detail.DetailScreen
 import com.example.bookshelfapp.ui.screens.favorites.FavoritesScreen
 import com.example.bookshelfapp.ui.screens.search.SearchScreen
@@ -21,10 +20,7 @@ import com.example.bookshelfapp.ui.screens.search.SearchScreen
 fun BookshelfNavHost(
     navController: NavHostController
 ) {
-    NavHost(navController = navController, startDestination = BottomBarDestination.BOOKS.name) {
-        composable(BottomBarDestination.BOOKS.name) {
-            BooksScreen()
-        }
+    NavHost(navController = navController, startDestination = BottomBarDestination.FAVORITES.name) {
         composable(BottomBarDestination.FAVORITES.name) {
             FavoritesScreen()
         }
