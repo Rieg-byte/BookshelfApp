@@ -1,6 +1,7 @@
 package com.example.bookshelfapp.ui.screens.detail
 
 
+import android.database.sqlite.SQLiteConstraintException
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,7 +11,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelfapp.BookshelfApplication
 import com.example.bookshelfapp.data.BooksRepository
-import com.example.bookshelfapp.data.remote.model.Book
+import com.example.bookshelfapp.data.FavoritesRepository
 import com.example.bookshelfapp.data.remote.model.BookInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +22,8 @@ import java.io.IOException
 
 class DetailViewModel(
     savedStateHandle: SavedStateHandle,
-    private val booksRepository: BooksRepository
+    private val booksRepository: BooksRepository,
+    private val favoritesRepository: FavoritesRepository
     ): ViewModel() {
     private val _detailUiState = MutableStateFlow<DetailUiState>(DetailUiState.Loading)
     val detailUiState: StateFlow<DetailUiState> = _detailUiState.asStateFlow()
@@ -35,6 +37,14 @@ class DetailViewModel(
         getBookInfo()
     }
 
+    fun insertBook(bookInfo: BookInfo) {
+        viewModelScope.launch {
+            try {
+                favoritesRepository.insertBook(bookInfo.convertBookInfoToFavoriteEntity())
+            } catch(e: SQLiteConstraintException) {
+            }
+        }
+    }
     fun getBookInfo(path: String = bookId ) = viewModelScope.launch {
         try {
             val bookInfo = booksRepository.getBookInfo(path)
@@ -47,13 +57,7 @@ class DetailViewModel(
     }
 
     private fun giveSuccessStatus(bookInfo: BookInfo){
-        _detailUiState.value = DetailUiState.Success(
-            title = bookInfo.title,
-            description = bookInfo.description,
-            author = bookInfo.author,
-            imageUrl = bookInfo.imageUrl,
-            previewLink = bookInfo.previewLink
-        )
+        _detailUiState.value = DetailUiState.Success(bookInfo)
 
     }
     private fun giveErrorStatus(){
@@ -66,7 +70,8 @@ class DetailViewModel(
             initializer {
                 val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as BookshelfApplication)
                 val booksListRepository = application.container.booksRepository
-                DetailViewModel(this.createSavedStateHandle() ,booksRepository = booksListRepository)
+                val favoritesRepository = application.container.favoritesRepository
+                DetailViewModel(this.createSavedStateHandle() ,booksRepository = booksListRepository, favoritesRepository = favoritesRepository)
             }
         }
     }
