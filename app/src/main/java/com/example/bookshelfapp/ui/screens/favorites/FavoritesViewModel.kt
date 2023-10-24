@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelfapp.BookshelfApplication
 import com.example.bookshelfapp.data.FavoritesRepository
+import com.example.bookshelfapp.data.local.entities.Favorite
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -19,6 +20,10 @@ class FavoritesViewModel(
 
     init {
         getAllFavorites()
+    }
+
+    fun deleteBook(favorite: Favorite) = viewModelScope.launch {
+        favoritesRepository.deleteBook(favorite)
     }
 
     private fun getAllFavorites() = viewModelScope.launch {
