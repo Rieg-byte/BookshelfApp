@@ -1,13 +1,12 @@
 package com.example.bookshelfapp.ui.screens.detail
 
+import com.example.bookshelfapp.data.remote.model.BookInfo
+
 
 sealed interface DetailUiState{
    data class Success(
-      val title: String = "",
-      val description: String = "",
-      val author: String = "",
-      val imageUrl: String = "",
-      val previewLink: String = ""
+      val bookInfo: BookInfo,
+      val showAlertDialog: Boolean = false
    ): DetailUiState
    object Loading: DetailUiState
    object Error: DetailUiState
