@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,7 +44,7 @@ fun DetailScreen(
         DetailAppBar(navigateUp = navigateUp)
         DetailBody(
             detailUiState = detailUiState,
-            onRepeat = detailViewModel::repeat
+            detailViewModel = detailViewModel
         )
     }
 
@@ -53,7 +55,6 @@ fun DetailScreen(
 private fun DetailAppBar(
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier
-
 ) {
     TopAppBar(
         title = {},
@@ -71,28 +72,29 @@ private fun DetailAppBar(
 @Composable
 private fun DetailBody(
     detailUiState: DetailUiState,
-    onRepeat: () -> Unit,
+    detailViewModel: DetailViewModel,
     modifier: Modifier = Modifier
 ) {
     when (detailUiState) {
         is DetailUiState.Success ->
             DetailInfoBook(
-                title = detailUiState.title,
-                author = detailUiState.author,
-                description = detailUiState.description,
-                imageUrl = detailUiState.imageUrl,
-                previewLink = detailUiState.previewLink
+                {detailViewModel.insertBook(detailUiState.bookInfo)},
+                title = detailUiState.bookInfo.title,
+                author = detailUiState.bookInfo.author,
+                description = detailUiState.bookInfo.description,
+                imageUrl = detailUiState.bookInfo.imageUrl,
+                previewLink = detailUiState.bookInfo.previewLink
             )
 
         is DetailUiState.Loading -> LoadingScreen()
-        is DetailUiState.Error -> ErrorScreen(onRepeat = onRepeat)
+        is DetailUiState.Error -> ErrorScreen(onRepeat = detailViewModel::repeat)
     }
-
 }
 
 
 @Composable
 private fun DetailInfoBook(
+    insertBook: () -> Unit,
     title: String,
     author: String,
     description: String,
@@ -150,6 +152,9 @@ private fun DetailInfoBook(
             fontSize = 14.sp
         )
         Spacer(modifier = Modifier.height(8.dp))
+        IconButton(onClick = insertBook) {
+            Icon(imageVector = Icons.Filled.FavoriteBorder, contentDescription = "")
+        }
         ButtonPreview(
             context = context,
             previewLink = previewLink
