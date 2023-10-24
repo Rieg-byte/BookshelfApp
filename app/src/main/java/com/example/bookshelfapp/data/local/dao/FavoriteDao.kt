@@ -13,4 +13,7 @@ interface FavoriteDao {
 
     @Insert
     suspend fun insertBook(favorite: Favorite)
+
+    @Query("SELECT COUNT(*) FROM favorites WHERE id=:bookId")
+    fun isFavorite(bookId: String): Flow<Int>
 }
