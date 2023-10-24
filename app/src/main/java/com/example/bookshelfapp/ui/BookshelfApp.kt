@@ -55,7 +55,6 @@ fun BookshelfBottomBar(
     modifier: Modifier = Modifier
 ){
     val items = listOf(
-        BottomBarDestination.BOOKS,
         BottomBarDestination.FAVORITES,
         BottomBarDestination.SEARCH
     )
