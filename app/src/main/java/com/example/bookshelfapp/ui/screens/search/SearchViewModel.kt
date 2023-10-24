@@ -11,8 +11,6 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelfapp.BookshelfApplication
 import com.example.bookshelfapp.data.BooksRepository
-import com.example.bookshelfapp.data.FavoritesRepository
-import com.example.bookshelfapp.data.local.entities.Favorite
 import com.example.bookshelfapp.data.remote.model.Item
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,8 +20,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class SearchViewModel(
-    private val booksRepository: BooksRepository,
-    private val favoritesRepository: FavoritesRepository
+    private val booksRepository: BooksRepository
 ) : ViewModel() {
     private val _searchUiState = MutableStateFlow<SearchUiState>(SearchUiState.Default)
     val searchUiState: StateFlow<SearchUiState> = _searchUiState.asStateFlow()
@@ -37,19 +34,6 @@ class SearchViewModel(
         userInput = newUserInput
         _searchUiState.value = SearchUiState.Default
 
-    }
-
-    fun insertBook(item: Item) {
-        viewModelScope.launch {
-            favoritesRepository.insertBook(
-                Favorite(
-                    title = item.title,
-                    author = "",
-                    imageUrl = item.imageUrl,
-                    selfLink = ""
-                )
-            )
-        }
     }
 
     /**
@@ -107,10 +91,8 @@ class SearchViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as BookshelfApplication)
                 val booksListRepository = application.container.booksRepository
-                val favoritesRepository = application.container.favoritesRepository
                 SearchViewModel(
-                    booksRepository = booksListRepository,
-                    favoritesRepository = favoritesRepository
+                    booksRepository = booksListRepository
                     )
             }
         }
