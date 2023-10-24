@@ -4,28 +4,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bookshelfapp.data.remote.model.Item
-import com.example.bookshelfapp.ui.components.BookImage
+import com.example.bookshelfapp.ui.components.BookCard
 import com.example.bookshelfapp.ui.components.DefaultScreen
 import com.example.bookshelfapp.ui.components.ErrorScreen
 import com.example.bookshelfapp.ui.components.LoadingScreen
@@ -49,7 +38,7 @@ fun SearchScreen(
         )
         SearchBody(
             searchUiState = searchUiState,
-            onBookItemClick = navigateToDetailScreen,
+            navigateToDetailScreen = navigateToDetailScreen,
             onRepeat = searchViewModel::repeat
         )
     }
@@ -73,7 +62,7 @@ private fun SearchTopBar(
 @Composable
 private fun SearchBody(
     searchUiState: SearchUiState,
-    onBookItemClick: (String) -> Unit,
+    navigateToDetailScreen: (String) -> Unit,
     onRepeat: () -> Unit,
     modifier: Modifier = Modifier
 
@@ -82,7 +71,7 @@ private fun SearchBody(
         is SearchUiState.Loading -> LoadingScreen()
         is SearchUiState.Success -> BooksListScreen(
             searchUiState.listOfBooks,
-            onBookItemClick
+            navigateToDetailScreen
         )
         is SearchUiState.Error -> ErrorScreen(onRepeat)
         is SearchUiState.NotFound -> NotFoundScreen(searchUiState.userInput)
@@ -107,51 +96,12 @@ fun BooksListScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(listOfBooks) {
-            BookItem(
+            BookCard(
                 title = it.title,
                 author = it.author,
                 imageUrl = it.imageUrl,
-                onBookItemClick = {onBookItemClick(it.id)},
+                navigateToDetailScreen = {onBookItemClick(it.id)},
             )
-        }
-    }
-}
-
-
-@Composable
-fun BookItem(
-    title: String,
-    author: String,
-    imageUrl: String,
-    onBookItemClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(160.dp)
-            .clickable { onBookItemClick() }
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            BookImage(imageUrl)
-            Column(modifier = Modifier.padding(8.dp)) {
-                Text(
-                    text = title,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 2
-                )
-                Text(
-                    text = author,
-                    fontSize = 14.sp,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
-                )
-            }
         }
     }
 }
