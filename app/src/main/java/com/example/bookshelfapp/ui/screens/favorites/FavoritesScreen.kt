@@ -12,7 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.bookshelfapp.ui.screens.search.BookItem
+import com.example.bookshelfapp.ui.components.BookCard
 
 @Composable
 fun FavoritesScreen(
@@ -29,7 +29,13 @@ fun FavoritesScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ){
             items(favoritesUiState.listOfFavorites) {
-                BookItem(title = it.title, author = it.author, imageUrl = it.imageUrl, onBookItemClick = { /*TODO*/ })
+                BookCard(
+                    title = it.title,
+                    author = it.author,
+                    imageUrl = it.imageUrl,
+                    showButtonDelete = true,
+                    onDeleteBook = {favoritesViewModel.deleteBook(it)}
+                    )
             }
         }
     }
