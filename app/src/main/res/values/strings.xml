@@ -14,5 +14,7 @@
     <string name="authors">Авторы</string>
     <string name="books">Книги</string>
     <string name="favorites">Избранное</string>
+    <string name="add_in_favorites">Добавить в избранное</string>
+
 
 </resources>
