@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 interface FavoriteDao {
     @Query("SELECT * FROM favorites")
     fun getAll(): Flow<List<Favorite>>
-
     @Insert
     suspend fun insertBook(favorite: Favorite)
 
@@ -19,5 +18,5 @@ interface FavoriteDao {
     suspend fun deleteBook(favorite: Favorite)
 
     @Query("SELECT COUNT(*) FROM favorites WHERE id=:bookId")
-    fun isFavorite(bookId: String): Flow<Int>
+    fun findBook(bookId: String): Flow<Int>
 }
