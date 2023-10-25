@@ -33,7 +33,7 @@ fun BookshelfApp(modifier: Modifier = Modifier) {
             .fillMaxSize(),
         topBar = { },
         bottomBar = { BookshelfBottomBar(navController = navController) }
-        ) {
+    ) {
         Surface(
             modifier = Modifier
                 .fillMaxSize()
