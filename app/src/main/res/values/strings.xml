@@ -15,6 +15,6 @@
     <string name="books">Книги</string>
     <string name="favorites">Избранное</string>
     <string name="add_in_favorites">Добавить в избранное</string>
-
+    <string name="favorites_is_empty">В избранном пусто\nВы можете добавить книги нажав ❤️</string>
 
 </resources>
