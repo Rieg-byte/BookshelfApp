@@ -24,7 +24,7 @@ class DetailViewModel(
     savedStateHandle: SavedStateHandle,
     private val booksRepository: BooksRepository,
     private val favoritesRepository: FavoritesRepository
-    ): ViewModel() {
+): ViewModel() {
     private val _detailUiState = MutableStateFlow<DetailUiState>(DetailUiState.Loading)
     val detailUiState: StateFlow<DetailUiState> = _detailUiState.asStateFlow()
     private val bookId: String = checkNotNull(savedStateHandle["bookId"])
