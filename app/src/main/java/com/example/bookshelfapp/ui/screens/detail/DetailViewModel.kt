@@ -37,11 +37,17 @@ class DetailViewModel(
         getBookInfo()
     }
 
+    fun isFavorite() = viewModelScope.launch {
+        favoritesRepository.isFavoriteBook(bookId).collect{
+            _detailUiState.value = (_detailUiState.value as DetailUiState.Success).copy(isFavorite = it)
+        }
+    }
     fun insertBook(bookInfo: BookInfo) {
         viewModelScope.launch {
             try {
                 favoritesRepository.insertBook(bookInfo.convertBookInfoToFavoriteEntity())
             } catch(e: SQLiteConstraintException) {
+                favoritesRepository.deleteBook(bookInfo.convertBookInfoToFavoriteEntity())
             }
         }
     }
@@ -58,6 +64,7 @@ class DetailViewModel(
 
     private fun giveSuccessStatus(bookInfo: BookInfo){
         _detailUiState.value = DetailUiState.Success(bookInfo)
+        isFavorite()
 
     }
     private fun giveErrorStatus(){
