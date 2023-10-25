@@ -1,12 +1,10 @@
 package com.example.bookshelfapp.ui.screens.search
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -95,14 +93,19 @@ fun BooksListScreen(
         contentPadding = PaddingValues(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(listOfBooks) {
-            BookCard(
-                title = it.title,
-                author = it.author,
-                imageUrl = it.imageUrl,
-                navigateToDetailScreen = {onBookItemClick(it.id)},
-            )
-        }
+        items(
+            count = listOfBooks.size,
+            key = {listOfBooks[it].id},
+            itemContent = { index ->
+                val bookData = listOfBooks[index]
+                BookCard(
+                    title = bookData.title,
+                    author = bookData.author,
+                    imageUrl = bookData.imageUrl,
+                    navigateToDetailScreen = {onBookItemClick(bookData.id)},
+                )
+            }
+        )
     }
 }
 
