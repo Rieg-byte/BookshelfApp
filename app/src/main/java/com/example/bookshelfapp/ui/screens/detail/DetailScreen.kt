@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -84,7 +85,8 @@ private fun DetailBody(
                 author = detailUiState.bookInfo.author,
                 description = detailUiState.bookInfo.description,
                 imageUrl = detailUiState.bookInfo.imageUrl,
-                previewLink = detailUiState.bookInfo.previewLink
+                previewLink = detailUiState.bookInfo.previewLink,
+                isFavorite = detailUiState.isFavorite,
             )
 
         is DetailUiState.Loading -> LoadingScreen()
@@ -101,6 +103,7 @@ private fun DetailInfoBook(
     description: String,
     imageUrl: String,
     previewLink: String,
+    isFavorite: Boolean,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -160,7 +163,9 @@ private fun DetailInfoBook(
             )
             Spacer(modifier = Modifier.width(8.dp))
             IconButton(onClick = insertBook) {
-                Icon(imageVector = Icons.Filled.FavoriteBorder, contentDescription = "")
+                Icon(imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder, contentDescription = stringResource(
+                    id = R.string.add_in_favorites
+                ))
             }
         }
         
