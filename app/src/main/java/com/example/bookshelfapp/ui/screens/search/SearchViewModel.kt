@@ -11,7 +11,6 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelfapp.BookshelfApplication
 import com.example.bookshelfapp.data.BooksRepository
-import com.example.bookshelfapp.data.remote.model.Item
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -55,36 +54,20 @@ class SearchViewModel(
      * Получить список книг
      */
     fun getBooksList(q: String) {
-        if (q.isBlank()) getDefaultStatus()
+        if (q.isBlank()) _searchUiState.value = SearchUiState.Default
         else viewModelScope.launch {
             try {
                 _searchUiState.value = SearchUiState.Loading
                 val bookList = booksRepository.getBooksList(q)
-                giveSuccessStatus(bookList)
+                _searchUiState.value = SearchUiState.Success(bookList)
             } catch (e: IOException) {
-                giveErrorStatus()
+                _searchUiState.value = SearchUiState.Error
             } catch (e: HttpException) {
-                giveErrorStatus()
+                _searchUiState.value = SearchUiState.Default
             }
         }
     }
 
-    private fun giveSuccessStatus(bookList: List<Item>) {
-        if (bookList != null) {
-            _searchUiState.value = SearchUiState.Success(bookList)
-        } else {
-            _searchUiState.value = SearchUiState.NotFound(userInput)
-        }
-    }
-
-    private fun giveErrorStatus() {
-        _searchUiState.value = SearchUiState.Error
-
-    }
-
-    private fun getDefaultStatus() {
-        _searchUiState.value = SearchUiState.Default
-    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

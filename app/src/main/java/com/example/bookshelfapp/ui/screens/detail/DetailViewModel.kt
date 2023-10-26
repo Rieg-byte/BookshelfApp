@@ -54,22 +54,13 @@ class DetailViewModel(
     fun getBookInfo(path: String = bookId ) = viewModelScope.launch {
         try {
             val bookInfo = booksRepository.getBookInfo(path)
-            giveSuccessStatus(bookInfo)
+            _detailUiState.value = DetailUiState.Success(bookInfo)
+            isFavorite()
         } catch (e: IOException){
-            giveErrorStatus()
+            _detailUiState.value = DetailUiState.Error
         } catch (e: HttpException){
-            giveErrorStatus()
+            _detailUiState.value = DetailUiState.Error
         }
-    }
-
-    private fun giveSuccessStatus(bookInfo: BookInfo){
-        _detailUiState.value = DetailUiState.Success(bookInfo)
-        isFavorite()
-
-    }
-    private fun giveErrorStatus(){
-        _detailUiState.value = DetailUiState.Error
-
     }
 
     companion object {
