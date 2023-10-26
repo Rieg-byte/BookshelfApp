@@ -51,8 +51,5 @@ class DefaultAppContainer(context: Context): AppContainer {
     override val favoritesRepository: FavoritesRepository by lazy {
         FavoritesRepositoryImpl(favoritesLocalDataSource)
     }
-
-
-
 }
 
