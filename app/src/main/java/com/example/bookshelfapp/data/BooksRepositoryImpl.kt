@@ -1,11 +1,11 @@
 package com.example.bookshelfapp.data
 
-import com.example.bookshelfapp.data.remote.BooksApi
+import com.example.bookshelfapp.data.remote.BooksRemoteDataSource
 import com.example.bookshelfapp.data.remote.model.BookInfo
 import com.example.bookshelfapp.data.remote.model.Item
 
 class BooksRepositoryImpl(
-    private val booksRemoteDataSource: BooksApi,
+    private val booksRemoteDataSource: BooksRemoteDataSource,
 ): BooksRepository {
     override suspend fun getBooksList(query: String): List<Item> {
         val result = booksRemoteDataSource.getBookList(query).items
