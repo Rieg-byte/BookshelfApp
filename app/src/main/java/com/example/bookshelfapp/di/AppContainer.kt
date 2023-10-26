@@ -6,7 +6,9 @@ import com.example.bookshelfapp.data.BooksRepository
 import com.example.bookshelfapp.data.BooksRepositoryImpl
 import com.example.bookshelfapp.data.FavoritesRepository
 import com.example.bookshelfapp.data.FavoritesRepositoryImpl
+import com.example.bookshelfapp.data.local.FavoritesLocalDataSource
 import com.example.bookshelfapp.data.remote.BooksApi
+import com.example.bookshelfapp.data.remote.BooksRemoteDataSource
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -35,12 +37,19 @@ class DefaultAppContainer(context: Context): AppContainer {
         retrofit.create(BooksApi::class.java)
     }
 
+    private val booksRemoteDataSource by lazy {
+        BooksRemoteDataSource(retrofitService)
+    }
+
+    private val favoritesLocalDataSource by lazy {
+        FavoritesLocalDataSource(BooksDatabase.getDatabase(context).favoriteDao())
+    }
     override val booksRepository: BooksRepository by lazy {
-        BooksRepositoryImpl(retrofitService)
+        BooksRepositoryImpl(booksRemoteDataSource)
     }
 
     override val favoritesRepository: FavoritesRepository by lazy {
-        FavoritesRepositoryImpl(BooksDatabase.getDatabase(context).favoriteDao())
+        FavoritesRepositoryImpl(favoritesLocalDataSource)
     }
 
 
