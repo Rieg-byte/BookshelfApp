@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bookshelfapp.ui.icons.BookshelfIcons
 
 @Composable
 fun BookCard(
@@ -56,7 +57,7 @@ fun BookCard(
                 )
                 if (showButtonDelete) {
                     IconButton(onClick = onDeleteBook) {
-                        Icon(imageVector = Icons.Filled.DeleteOutline, contentDescription = "")
+                        Icon(imageVector = BookshelfIcons.DeleteOutline, contentDescription = "")
                     }
                 }
             }
