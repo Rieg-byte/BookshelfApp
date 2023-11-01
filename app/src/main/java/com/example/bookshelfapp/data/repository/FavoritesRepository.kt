@@ -1,4 +1,4 @@
-package com.example.bookshelfapp.data
+package com.example.bookshelfapp.data.repository
 
 import com.example.bookshelfapp.data.local.entities.Favorite
 import kotlinx.coroutines.flow.Flow
