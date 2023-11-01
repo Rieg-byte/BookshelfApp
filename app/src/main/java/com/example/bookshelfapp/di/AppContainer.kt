@@ -2,10 +2,10 @@ package com.example.bookshelfapp.di
 
 import android.content.Context
 import com.example.bookshelfapp.data.local.BooksDatabase
-import com.example.bookshelfapp.data.BooksRepository
-import com.example.bookshelfapp.data.BooksRepositoryImpl
-import com.example.bookshelfapp.data.FavoritesRepository
-import com.example.bookshelfapp.data.FavoritesRepositoryImpl
+import com.example.bookshelfapp.data.repository.BooksRepository
+import com.example.bookshelfapp.data.repository.BooksRepositoryImpl
+import com.example.bookshelfapp.data.repository.FavoritesRepository
+import com.example.bookshelfapp.data.repository.FavoritesRepositoryImpl
 import com.example.bookshelfapp.data.local.FavoritesLocalDataSource
 import com.example.bookshelfapp.data.remote.BooksApi
 import com.example.bookshelfapp.data.remote.BooksRemoteDataSource
