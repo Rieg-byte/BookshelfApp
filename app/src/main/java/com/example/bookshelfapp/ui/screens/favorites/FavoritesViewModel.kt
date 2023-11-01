@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelfapp.BookshelfApplication
-import com.example.bookshelfapp.data.FavoritesRepository
+import com.example.bookshelfapp.data.repository.FavoritesRepository
 import com.example.bookshelfapp.data.local.entities.Favorite
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
