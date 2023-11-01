@@ -10,8 +10,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelfapp.BookshelfApplication
-import com.example.bookshelfapp.data.BooksRepository
-import com.example.bookshelfapp.data.FavoritesRepository
+import com.example.bookshelfapp.data.repository.BooksRepository
+import com.example.bookshelfapp.data.repository.FavoritesRepository
 import com.example.bookshelfapp.data.remote.model.BookInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -54,7 +54,7 @@ class DetailViewModel(
     fun getBookInfo(path: String = bookId ) = viewModelScope.launch {
         try {
             val bookInfo = booksRepository.getBookInfo(path)
-            _detailUiState.value = DetailUiState.Success(bookInfo)
+            _detailUiState.value = DetailUiState.Success(bookInfo.convertToBookInfo())
             isFavorite()
         } catch (e: IOException){
             _detailUiState.value = DetailUiState.Error

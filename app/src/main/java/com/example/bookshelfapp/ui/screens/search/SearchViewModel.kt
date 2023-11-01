@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.bookshelfapp.BookshelfApplication
-import com.example.bookshelfapp.data.BooksRepository
+import com.example.bookshelfapp.data.repository.BooksRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -59,7 +59,7 @@ class SearchViewModel(
             try {
                 _searchUiState.value = SearchUiState.Loading
                 val bookList = booksRepository.getBooksList(q)
-                _searchUiState.value = SearchUiState.Success(bookList)
+                _searchUiState.value = SearchUiState.Success(bookList.convertToItemList())
             } catch (e: IOException) {
                 _searchUiState.value = SearchUiState.Error
             } catch (e: HttpException) {
